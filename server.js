@@ -7,13 +7,6 @@ const dotenv = require("dotenv");
 dotenv.config();
 const PORT = process.env.PORT || 8090;
 
-// import
-// import express  from 'express';
-// import bodyparser from 'body-parser';
-// import cookieParser from 'cookie-parser';
-// import dotenv from 'dotenv';
-
-
 //connect mongoDB
 const connectDB = require('./server/database/connection')
 
