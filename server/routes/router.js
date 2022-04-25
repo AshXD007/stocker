@@ -11,7 +11,7 @@ route.get('/',async(req,res)=>{
 // API
 
 route.post('/api/createUser',usersController.createUser)
-// route.post('/api/login-user',usersController)
+// route.post('/api/login-user',usersController.loginUser)
 
 
 module.exports=route;
