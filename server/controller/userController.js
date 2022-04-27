@@ -8,7 +8,6 @@ const helpers  = require('../helpers/helpers')
 //create user
 
 exports.createUser = async(req,res)=>{
-    console.log('here in req body;',req.body);
     //get data from request
     const username = req.body.username;
     const password = req.body.password;
@@ -61,9 +60,48 @@ exports.createUser = async(req,res)=>{
     try {
         const savedUser = await user.save();
         // #TODO
-        res.status(200).send({message:'user saved'})
+        res.status(200).send({message:'user saved',user:savedUser});
     } catch (error) {
-        res.status(400).send({message:error})
+        res.status(400).send({message:error});
     }
 
 }
+
+
+//login User
+
+exports.loginUser = async(req,res) =>{
+    //parse req body
+    const username = req.body.username;
+    const password = req.body.password;
+    // check for empty fields 
+    if (!username || !password) return res.status(400).send({message:"input field empty"});
+    // check for user exist 
+    const user = await userM.findOne({username:username});
+    //if user doesn't exists
+    if(!user) return res.status(400).send({message:'wrong username'});
+    const user_name = user.username;
+    const user_id = user.user_id;
+    const user_password_hashed = user.password;
+    const user_company = user.company;
+    const user_token = user.verification_token;
+    const pass_verify = await bcrypt.compare(password,user_password_hashed);
+    //if pass is wrong
+    if (pass_verify == false) return res.status(400).send({message:'wrong password'});
+    
+    const userObject={
+        username:user_name,
+        user_id:user_id,
+        company:user_company,
+        token:user_token
+    } 
+
+    return res.status(200).header('auth-token',user_token).cookie("token",user_token,{
+        httpOnly:true
+    }).cookie('username',user_name,{
+        httpOnly:true
+    }).send({user:userObject});
+
+
+}
+
