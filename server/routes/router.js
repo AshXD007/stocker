@@ -15,5 +15,5 @@ route.post('/api/loginUser',usersController.loginUser);
 
 //Api for Raw materials
 route.post('/api/addRawMaterial',verifyToken,rawMController.addRaw);
-
+route.post('/api/viewRawMaterial',verifyToken,rawMController.viewRaw);
 module.exports=route;
