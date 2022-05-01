@@ -9,7 +9,6 @@ module.exports = async(req,res,next) =>{
 
     const tokenDb = user.verification_token;
     const verified = verify(token,tokenDb);
-    console.log(verified)
     if(verified == true ){
         next();
     }else{
@@ -19,7 +18,6 @@ module.exports = async(req,res,next) =>{
 
 
 verify = (a,b)=>{
-    console.log(a,b)
     if (a === b) {return true;}
     else {return false;}
 }
