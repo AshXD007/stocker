@@ -5,6 +5,8 @@ const usersController = require('../controller/userController');
 const verifyToken = require('../controller/verifyUser');
 //raw material controller
 const rawMController = require('../controller/rawMaterialCont');
+//process controller
+const processController = require('../controller/processCont');
 
 
 
@@ -16,4 +18,7 @@ route.post('/api/loginUser',usersController.loginUser);
 //Api for Raw materials
 route.post('/api/addRawMaterial',verifyToken,rawMController.addRaw);
 route.post('/api/viewRawMaterial',verifyToken,rawMController.viewRaw);
+
+route.post('/api/addProcess',processController.addProcess);
+route.post('/api/getProcess',processController.getProcess);
 module.exports=route;

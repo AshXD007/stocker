@@ -3,32 +3,32 @@ const rawModel = require('../model/rawMaterialModel');
 exports.addRaw = async(req,res) =>{
     const body = req.body;
     const user_id = body.user_id;
-    let raw_id = body.raw_id;
-    let raw_name = body.raw_name;
-    const raw_details = body.raw_details;
+    let chemical_id = body.chemical_id;
+    let chemical_name = body.chemical_name;
+    const chemical_details = body.chemical_details;
 
     //data check
-    if(!user_id || !raw_id || !raw_name || !raw_details) return res.status(400).send({message:"empty field"});
+    if(!user_id ||chemical_id || !chemical_name || !chemical_details) return res.status(400).send({message:"empty field"});
 
     //force capitalize
-    raw_id = raw_id.toUpperCase();
-    raw_name = raw_name.toUpperCase();
-    //if raw material exists for user
-    const idExist = await rawModel.findOne({user_id:user_id,raw_id:raw_id});
-    if(idExist) return res.status(400).send({message:'raw material with same id exist'});
+    chemical_id = chemical_id.toUpperCase();
+    chemical_name = chemical_name.toUpperCase();
+    //if chemical material exists for user
+    const idExist = await chemicalModel.findOne({user_id:user_id,chemical_id:chemical_id});
+    if(idExist) return res.status(400).send({message:'chemical material with same id exist'});
 
     //if data pass all checks
-    const raw = new rawModel({
+    const chemical = new chemicalModel({
         user_id:user_id,
-        raw_id:raw_id,
-        raw_name:raw_name,
-        raw_details:raw_details
+        chemical_id:chemical_id,
+        chemical_name:chemical_name,
+        chemical_details:chemical_details
     })
 
     try {
         //save the user in the database
-        const savedRaw = await raw.save();
-        res.status(200).send({message:'saved raw material',raw:savedRaw});
+        const savedChemical = await chemical.save();
+        res.status(200).send({message:'saved chemical material',chemical:savedChemical});
     } catch (error) {
         res.status(400).send({message:error});
     }

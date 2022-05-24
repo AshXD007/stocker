@@ -5,15 +5,15 @@ const rawMaterialModel = new mongoose.Schema({
         type:String,
         required:true,
     },
-    raw_id:{
+    chemical_id:{
         type:String,
         required:true,
     },
-    raw_name:{
+    chemical_name:{
         type:String,
         required:true
     },
-    raw_details:{
+    chemical_details:{
         type:String,
     }
 })

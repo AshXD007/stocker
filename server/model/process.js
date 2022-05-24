@@ -28,4 +28,7 @@ const processModel = new mongoose.Schema({
     remarks:{
         type:String,
     }
-})
+});
+
+const process = new mongoose.model('process',processModel);
+module.exports = process;
