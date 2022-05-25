@@ -19,6 +19,6 @@ route.post('/api/loginUser',usersController.loginUser);
 route.post('/api/addRawMaterial',verifyToken,rawMController.addRaw);
 route.post('/api/viewRawMaterial',verifyToken,rawMController.viewRaw);
 
-route.post('/api/addProcess',processController.addProcess);
-route.post('/api/getProcess',processController.getProcess);
+route.post('/api/addProcess',verifyToken,processController.addProcess);
+route.post('/api/getProcess',verifyToken,processController.getProcess);
 module.exports=route;
