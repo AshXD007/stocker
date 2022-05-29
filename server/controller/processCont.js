@@ -1,4 +1,6 @@
 const processModel = require('../model/process');
+const rawModel = require('../model/rawMaterialModel');
+const chemicalModel = require('../model/rawMaterialModel');
 
 //sample data sent from user
 // data = {
@@ -39,8 +41,12 @@ exports.addProcess = async(req,res) =>{
     //add for every chemical (raw material)
 
     for(let i = 0 ; i < idLength ; i++) {
-        cid = chemical_id[i]
-        cnm = chemical_name[i]
+        cid = chemical_id[i];
+        cnm = chemical_name[i];
+        const cExist = await rawModel.find({user_id:user_id,chemical_id:cid,chemical_name:cnm});
+        if (JSON.stringify(cExist) === '[]'){
+            return res.status(400).send({message:"please add chemical",chemical_id:cid});
+        }
         const process = new processModel({
             user_id:user_id,
             chemical_name:cnm.toUpperCase(),
@@ -105,3 +111,8 @@ exports.getProcess = async(req,res) =>{
     } ;
     return res.status(200).send({resData});
 }
+
+//process
+//check if all chemical are added as raw when adding in process 
+
+//edit and delete process
