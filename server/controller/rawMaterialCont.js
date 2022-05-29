@@ -1,4 +1,4 @@
-const rawModel = require('../model/rawMaterialModel');
+const chemicalModel = require('../model/rawMaterialModel');
 
 exports.addRaw = async(req,res) =>{
     const body = req.body;
@@ -8,7 +8,7 @@ exports.addRaw = async(req,res) =>{
     const chemical_details = body.chemical_details;
 
     //data check
-    if(!user_id ||chemical_id || !chemical_name || !chemical_details) return res.status(400).send({message:"empty field"});
+    if(!user_id || !chemical_id || !chemical_name || !chemical_details) return res.status(400).send({message:"empty field"});
 
     //force capitalize
     chemical_id = chemical_id.toUpperCase();

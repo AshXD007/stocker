@@ -21,4 +21,5 @@ route.post('/api/viewRawMaterial',verifyToken,rawMController.viewRaw);
 
 route.post('/api/addProcess',verifyToken,processController.addProcess);
 route.post('/api/getProcess',verifyToken,processController.getProcess);
+route.post('/api/allProcess',verifyToken,processController.allProcess);
 module.exports=route;

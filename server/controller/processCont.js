@@ -24,7 +24,8 @@ exports.addProcess = async(req,res) =>{
     const chemical_id = body.chemical_id;
     const chemical_perc = body.chemical_perc;
     const remarks = body.remarks;
-
+    console.log(process_id,process_name,chemical_name,chemical_id,chemical_perc);
+    console.log(typeof(process_id),typeof(process_name),typeof(chemical_name),typeof(chemical_id),typeof(chemical_perc))
     const idLength = chemical_id.length;
     const nameLength = chemical_name.length;
     const percLength = chemical_perc.length;
@@ -41,16 +42,16 @@ exports.addProcess = async(req,res) =>{
     //add for every chemical (raw material)
 
     for(let i = 0 ; i < idLength ; i++) {
-        cid = chemical_id[i];
-        cnm = chemical_name[i];
+        cid = chemical_id[i].toUpperCase();
+        cnm = chemical_name[i].toUpperCase();
         const cExist = await rawModel.find({user_id:user_id,chemical_id:cid,chemical_name:cnm});
         if (JSON.stringify(cExist) === '[]'){
             return res.status(400).send({message:"please add chemical",chemical_id:cid});
         }
         const process = new processModel({
             user_id:user_id,
-            chemical_name:cnm.toUpperCase(),
-            chemical_id:cid.toUpperCase(),
+            chemical_name:cnm,
+            chemical_id:cid,
             chemical_perc:chemical_perc[i],
             process_name:process_name,
             process_id:process_id,
@@ -83,7 +84,12 @@ exports.getProcess = async(req,res) =>{
     process_id = process_id.toUpperCase();
     process_name = process_name.toUpperCase();
 
-    let data = await processModel.find({user_id:user_id,process_id:process_id,process_name:process_name});
+    let data;
+    try {
+        data = await processModel.find({user_id:user_id,process_id:process_id,process_name:process_name});
+    } catch (error) {
+        res.status(400).send(error);
+    }
     //if empty data
     const testData = JSON.stringify(data);
     if (testData === "[]") return res.status(400).send({message:"no process"});
@@ -112,7 +118,46 @@ exports.getProcess = async(req,res) =>{
     return res.status(200).send({resData});
 }
 
-//process
-//check if all chemical are added as raw when adding in process 
+exports.allProcess = async(req,res)=>{
+    const body = req.body;
+    const user_id = body.user_id;
 
-//edit and delete process
+    if(!user_id) return res.status(400).send({message:"no user_id"});
+
+    let data;
+    try {
+        //get whole process data from database
+        data = await processModel.find({user_id:user_id});
+    } catch (error) {
+        res.status(400).send(error);
+    }
+
+    //array to store response
+    let process = [];
+    //loop over data 
+    for(let i =0 ; i < data.length ; i++){
+        //flag to check if process id exist in res
+        //this removes multiple same process id and name cause by poor database architecture
+        let flag = false;
+        //loop over res array (process)
+        for(let k = 0 ; k < process.length ; k++){
+            //if current data's process id is same as any process id in process array flag
+            if(process[k].process_id === data[i].process_id) {
+                flag = true;
+            }
+        }
+        //if flag remains false
+        if(flag === false){
+            //object to store process
+            const details = {};
+            details.process_id = data[i].process_id;
+            details.process_name = data[i].process_name;
+            details.remarks = data[i].remarks;
+            process.push(details);
+        }
+    }
+
+    //send the response array
+    res.status(200).send({process:process});
+
+}
