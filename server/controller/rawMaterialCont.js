@@ -48,3 +48,27 @@ exports.viewRaw = async(req,res)=>{
     //if data has raw materials
     return res.status(200).send(data);
 }
+
+
+exports.deleteRawMaterials = async (req,res)=>{
+    const body = req.body;
+    const user_id = body.user_id;
+    const chemical_id = body.chemical_id;
+    const chemical_name = body.chemical_name;
+
+    if(!user_id || !chemical_id || !chemical_name) return res.status(400).send({message:"empty fields"});
+
+    const query = {
+        user_id:user_id,
+        chemical_id:chemical_id.toUpperCase(),
+        chemical_name:chemical_name.toUpperCase()
+    }
+    try {
+        const deleted = await chemicalModel.deleteOne(query);
+        if(deleted.deletedCount === 0) return res.status(400).send({message:"check input or no chemical with same data"});
+        
+        return res.status(200).send({message:"deleted successfully"});
+    } catch (error) {
+        return res.status(500).send({error})
+    }
+}

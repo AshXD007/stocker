@@ -161,3 +161,31 @@ exports.allProcess = async(req,res)=>{
     res.status(200).send({process:process});
 
 }
+
+
+//delete process
+
+exports.deleteProcess = async (req,res) =>{
+    const body = req.body;
+    const user_id = body.user_id;
+    const process_id = body.process_id;
+    const process_name = body.process_name;
+
+    if(!user_id || !process_id || !process_name) return res.status(400).send({message:"empty fields"});
+
+    const pid = process_id;
+    const pnm = process_name;
+    const query = {
+        user_id:user_id,
+        process_id:pid,
+        process_name:pnm
+    }
+    try {
+        const deletedProcess = await processModel.deleteMany(query);
+        if(deletedProcess.deletedCount === 0) return res.status(400).send({message:"check input or no process with id"});
+        res.status(200).send({message:"deleted successfully"});
+
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}
