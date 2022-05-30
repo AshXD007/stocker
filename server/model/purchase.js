@@ -34,18 +34,17 @@ const purchaseModel = new mongoose.Schema({
             required:true
         },
         perc:{
-            type:String,
+            type:Number,
         },
         amount:{
-            type:String,
+            type:Number,
         },
         totalAmount:{
-            type:String
+            type:Number
         }
     },
     seller_name:{
-        type:String,
-        required:true
+        type:String
     },
     remarks:{
         type:String,

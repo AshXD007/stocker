@@ -1,4 +1,5 @@
 const chemicalModel = require('../model/rawMaterialModel');
+const inventoryModel = require('../model/inventory');
 
 exports.addRaw = async(req,res) =>{
     const body = req.body;
@@ -24,13 +25,21 @@ exports.addRaw = async(req,res) =>{
         chemical_name:chemical_name,
         chemical_details:chemical_details
     })
+    const inventory = new inventoryModel({
+        user_id:user_id,
+        chemical_id:chemical_id,
+        chemical_name:chemical_name,
+        quantity:0,
+        inventoryAvgPrice:0
+    })
 
     try {
         //save the user in the database
         const savedChemical = await chemical.save();
-        res.status(200).send({message:'saved chemical material',chemical:savedChemical});
+        const savedInventory = await inventory.save();
+        res.status(200).send({message:'saved chemical material',chemical:savedChemical,inventory:savedInventory});
     } catch (error) {
-        res.status(400).send({message:error});
+        res.status(500).send({message:error});
     }
 } 
 

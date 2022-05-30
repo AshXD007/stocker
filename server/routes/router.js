@@ -19,8 +19,12 @@ route.post('/api/loginUser',usersController.loginUser);
 route.post('/api/addRawMaterial',verifyToken,rawMController.addRaw);
 route.post('/api/viewRawMaterial',verifyToken,rawMController.viewRaw);
 
+//API for process
 route.post('/api/addProcess',verifyToken,processController.addProcess);
 route.post('/api/getProcess',verifyToken,processController.getProcess);
 route.post('/api/allProcess',verifyToken,processController.allProcess);
-route.post('/api/deleteProcess',processController.deleteProcess);
+route.post('/api/deleteProcess',verifyToken,processController.deleteProcess);
+
+//API for Transactions
+
 module.exports=route;

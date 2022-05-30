@@ -2,6 +2,8 @@ const processModel = require('../model/process');
 const rawModel = require('../model/rawMaterialModel');
 const chemicalModel = require('../model/rawMaterialModel');
 
+const helpers = require('../helpers/helpers');
+
 //sample data sent from user
 // data = {
 //     user_id:'q',
@@ -24,8 +26,8 @@ exports.addProcess = async(req,res) =>{
     const chemical_id = body.chemical_id;
     const chemical_perc = body.chemical_perc;
     const remarks = body.remarks;
-    console.log(process_id,process_name,chemical_name,chemical_id,chemical_perc);
-    console.log(typeof(process_id),typeof(process_name),typeof(chemical_name),typeof(chemical_id),typeof(chemical_perc))
+
+
     const idLength = chemical_id.length;
     const nameLength = chemical_name.length;
     const percLength = chemical_perc.length;
@@ -44,10 +46,17 @@ exports.addProcess = async(req,res) =>{
     for(let i = 0 ; i < idLength ; i++) {
         cid = chemical_id[i].toUpperCase();
         cnm = chemical_name[i].toUpperCase();
-        const cExist = await rawModel.find({user_id:user_id,chemical_id:cid,chemical_name:cnm});
-        if (JSON.stringify(cExist) === '[]'){
-            return res.status(400).send({message:"please add chemical",chemical_id:cid});
+        // const cExist = await rawModel.find({user_id:user_id,chemical_id:cid,chemical_name:cnm});
+        // if (JSON.stringify(cExist) === '[]'){
+        //     return res.status(400).send({message:"please add chemical",chemical_id:cid});
+        // }
+        const sendData = {
+            user_id:user_id,
+            chemical_id:cid,
+            chemical_name:cnm
         }
+        if(helpers.existsInRaw(sendData) === false)  return res.status(400).send({message:"please add chemical",chemical_id:cid});
+
         const process = new processModel({
             user_id:user_id,
             chemical_name:cnm,
@@ -173,8 +182,8 @@ exports.deleteProcess = async (req,res) =>{
 
     if(!user_id || !process_id || !process_name) return res.status(400).send({message:"empty fields"});
 
-    const pid = process_id;
-    const pnm = process_name;
+    const pid = process_id.toUpperCase();
+    const pnm = process_name.toUpperCase();
     const query = {
         user_id:user_id,
         process_id:pid,

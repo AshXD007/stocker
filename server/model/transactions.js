@@ -21,7 +21,7 @@ const transactionModel = new mongoose.Schema({
         required:true
     },
     quantity:{
-        type:String,
+        type:Number,
         required:true
     },
     lot_name:{
@@ -31,7 +31,7 @@ const transactionModel = new mongoose.Schema({
         type:String,
     },
     price:{
-        type:String,
+        type:Number,
     },
     remarks:{
         type:String,
