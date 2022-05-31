@@ -11,7 +11,7 @@ exports.tokenCreator = async(string)=>{
 
 //check if raw material exists
 exports.existsInRaw = async(data) =>{
-    let flag = false;
+    let flag = true;
     const user_id = data.user_id;
     const chemical_id = data.chemical_id.toUpperCase();
     const chemical_name = data.chemical_id.toUpperCase();
@@ -22,8 +22,8 @@ exports.existsInRaw = async(data) =>{
         chemical_name:chemical_name
     }
     const cExist = await rawModel.find(query);
-    if (JSON.stringify(cExist) !== '[]'){
-        flag = true;
+    if (JSON.stringify(cExist) === '[]'){
+        flag = false;
     }
 
     return flag;

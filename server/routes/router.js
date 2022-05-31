@@ -7,7 +7,8 @@ const verifyToken = require('../controller/verifyUser');
 const rawMController = require('../controller/rawMaterialCont');
 //process controller
 const processController = require('../controller/processCont');
-
+//transactions controller
+const transactionsController = require('../controller/transactionController');
 
 
 
@@ -26,5 +27,6 @@ route.post('/api/allProcess',verifyToken,processController.allProcess);
 route.post('/api/deleteProcess',verifyToken,processController.deleteProcess);
 
 //API for Transactions
+route.post('/api/transactions/increase/purchase',transactionsController.purchase);
 
 module.exports=route;

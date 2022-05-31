@@ -4,7 +4,7 @@ const transactionModel = new mongoose.Schema({
         type:String,
         required:true
     },
-    date:{
+    date_time:{
         type:Date,
         required:true
     },
@@ -24,7 +24,7 @@ const transactionModel = new mongoose.Schema({
         type:Number,
         required:true
     },
-    lot_name:{
+    lot_id:{
         type:String,
     },
     process_id:{

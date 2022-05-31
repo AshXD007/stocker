@@ -4,7 +4,7 @@ const purchaseModel = new mongoose.Schema({
         type:String,
         required:true
     },
-    date:{
+    date_time:{
         type:Date,
         required:true
     },
@@ -20,7 +20,7 @@ const purchaseModel = new mongoose.Schema({
         type:Number,
         required:true
     },
-    Price:{
+    price:{
         type:Number,
         required:true
     },
@@ -29,7 +29,7 @@ const purchaseModel = new mongoose.Schema({
         required:true
     },
     gst:{
-        Bool:{
+        bool:{
             type:Boolean,
             required:true
         },
@@ -43,7 +43,7 @@ const purchaseModel = new mongoose.Schema({
             type:Number
         }
     },
-    seller_name:{
+    seller:{
         type:String
     },
     remarks:{

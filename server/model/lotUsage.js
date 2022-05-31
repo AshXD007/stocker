@@ -8,7 +8,7 @@ const lotModel = new mongoose.Schema({
         type:Date,
         required:true
     },
-    lot_name:{
+    lot_id:{
         type:String,
         required:true
     },
