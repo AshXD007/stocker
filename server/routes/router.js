@@ -28,5 +28,4 @@ route.post('/api/deleteProcess',verifyToken,processController.deleteProcess);
 
 //API for Transactions
 route.post('/api/transactions/increase/purchase',transactionsController.purchase);
-
 module.exports=route;

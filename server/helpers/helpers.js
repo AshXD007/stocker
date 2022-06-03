@@ -28,3 +28,25 @@ exports.existsInRaw = async(data) =>{
 
     return flag;
 }
+
+
+
+exports.dateValidate = async(date) =>{
+    let tempDate= "";
+    //if month single digit
+    if(date.month < 10 )
+    {
+        tempDate = date.year + "-0" + date.month+ "-" + date.day + "T00:00:01Z";
+    }
+    //if day single digit
+    if(date.day < 10 )
+    {
+        tempDate = date.year + "-" + date.month+ "-0" + date.day + "T00:00:01Z";
+    }
+    //if both are single digit
+    if(date.month < 10 && date.day < 10 ){
+        tempDate = date.year + "-0" + date.month+ "-0" + date.day + "T00:00:01Z";
+    }
+
+    return tempDate;
+}
