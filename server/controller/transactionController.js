@@ -87,12 +87,32 @@ exports.purchase = async (req,res) =>{
 
     //final levels 
     const finalQuantity = invQuantity + quantity;
-    const finalAvgPrice = ((invAvgPrice + price) / finalQuantity) * 100;
-    console.log(invData);
+    let finalAvgPrice;
+    if(invAvgPrice !== 0 ){
+        finalAvgPrice = (invAvgPrice + price ) /2;
+    }else{
+        finalAvgPrice = price;
+    }
+    console.log(finalAvgPrice);
 
+
+    //transaction database
+
+    const transaction = new transactionModel({
+        user_id:user_id,
+        date_time:new Date(date),
+        t_type:"PURCHASE",
+        chemical_name:chemical_name,
+        chemical_id:chemical_id,
+        quantity:quantity,
+        price:price,
+        remarks:remarks
+    })
     try {
         const savedPurchase = await purchase.save();
-        res.send(savedPurchase);
+        const updatedInventory = await inventoryModel.updateOne({user_id:user_id,chemical_id:chemical_id,chemical_name:chemical_name},{quantity:finalQuantity,inventoryAvgPrice:finalAvgPrice});
+        const savedTransaction = await transaction.save();
+        res.status(200).send({saved:savedPurchase,updated:updatedInventory,transaction:savedTransaction});
     } catch (error) {
      res.send(error)   
     }

@@ -11,7 +11,7 @@
     "unique-string": "^3.0.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.16"
   },
   "scripts": {
     "start": "node server.js",
