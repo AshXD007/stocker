@@ -27,5 +27,9 @@ route.post('/api/allProcess',verifyToken,processController.allProcess);
 route.post('/api/deleteProcess',verifyToken,processController.deleteProcess);
 
 //API for Transactions
-route.post('/api/transactions/increase/purchase',transactionsController.purchase);
+route.post('/api/transactions/increase/purchase',verifyToken,transactionsController.purchase);
+route.post('/api/transactions/increase/manual/',verifyToken,transactionsController.manualIncrease);
+
+
+
 module.exports=route;

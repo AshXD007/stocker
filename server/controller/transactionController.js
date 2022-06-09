@@ -16,8 +16,8 @@ exports.purchase = async (req,res) =>{
         // min:"00",
         // sec:"00"
     }
-    const chemical_name = body.chemical_name.toUpperCase();
-    const chemical_id = body.chemical_id.toUpperCase();
+    const chemicalName = body.chemical_name;
+    const chemicalId = body.chemical_id;
     const quantity = body.quantity;
     const price = body.price;
     const seller = body.seller;
@@ -31,9 +31,14 @@ exports.purchase = async (req,res) =>{
     const remarks = body.remarks;
 
     //data checks 
-    if(date_time.month > 12 || date_time.month < 1 || date_time.day > 31 || date_time.day < 1)return res.status(400).send({message:"wrong date"});
+    // if(date_time.month > 12 || date_time.month < 1 || date_time.day > 31 || date_time.day < 1)return res.status(400).send({message:"wrong date"});
     //empty fields
-    if(!user_id ||!date_time||!chemical_id||!chemical_name||!quantity||!price||!seller||!amount||!gst ) return res.status(400).send({message:"empty field/s"});
+    if(!user_id ||!date_time||!chemicalId||!chemicalName||!quantity||!price||!seller||!amount||!gst ) return res.status(400).send({message:"empty field/s"});
+
+    const chemical_id = chemicalId.toUpperCase();
+    const chemical_name = chemicalName.toUpperCase();
+    //data checks 
+    if(date_time.month > 12 || date_time.month < 1 || date_time.day > 31 || date_time.day < 1)return res.status(400).send({message:"wrong date"});
     //negative quantity
     if(quantity <= 0 ) return res.status(400).send({message:"nill quantity"});
     //wrong amount
@@ -93,7 +98,6 @@ exports.purchase = async (req,res) =>{
     }else{
         finalAvgPrice = price;
     }
-    console.log(finalAvgPrice);
 
 
     //transaction database
@@ -105,6 +109,7 @@ exports.purchase = async (req,res) =>{
         chemical_name:chemical_name,
         chemical_id:chemical_id,
         quantity:quantity,
+        currentInvQuantity:finalQuantity,
         price:price,
         remarks:remarks
     })
@@ -116,4 +121,69 @@ exports.purchase = async (req,res) =>{
     } catch (error) {
      res.send(error)   
     }
+}
+
+
+
+//manual increase
+
+exports.manualIncrease = async (req,res)=>{
+    const {user_id,date_time,chemical_id,chemical_name,quantity,price,t_type,remarks} = req.body;
+    console.log(req.body);
+
+
+    //empty fields
+    if(!user_id ||!date_time||!chemical_id||!chemical_name||!quantity||!t_type) return res.status(400).send({message:"empty field/s"});
+
+    const cid = chemical_id.toUpperCase();
+    const cnm = chemical_name.toUpperCase();
+    //data checks 
+    if(date_time.month > 12 || date_time.month < 1 || date_time.day > 31 || date_time.day < 1)return res.status(400).send({message:"wrong date"});
+    //negative quantity
+    if(quantity <= 0 ) return res.status(400).send({message:"nill quantity"});
+
+    //check if chemical exists in raw materials 
+    if(helpers.existsInRaw({user_id:user_id,chemical_id:cid,chemical_name:cnm}) === false ) return res.status(400).send({message:"please add chemical to raw material "});
+
+    //setup date time to store easily
+    const date = await helpers.dateValidate(date_time);
+
+    //inventory values
+    const invData = await inventoryModel.findOne({user_id:user_id,chemical_id:chemical_id.toUpperCase(),chemical_name:chemical_name.toUpperCase()});
+
+    //inventory levels
+    const invQuantity = invData.quantity;
+    const invAvgPrice = invData.inventoryAvgPrice;
+
+    //final levels 
+    const finalQuantity = invQuantity + quantity;
+    let finalAvgPrice;
+    if(price !== 0){
+    if(invAvgPrice !== 0 ){
+        finalAvgPrice = (invAvgPrice + price ) /2;
+    }else{
+        finalAvgPrice = price;
+    }
+    }
+
+    const transaction = new transactionModel({
+        user_id:user_id,
+        date_time:new Date(date),
+        t_type:t_type.toUpperCase(),
+        chemical_name:chemical_name,
+        chemical_id:chemical_id,
+        quantity:quantity,
+        currentInvQuantity:finalQuantity,
+        price:price,
+        remarks:remarks
+    })
+    try {
+        const updatedInventory = await inventoryModel.updateOne({user_id:user_id,chemical_id:cid,chemical_name:cnm},{quantity:finalQuantity,inventoryAvgPrice:finalAvgPrice});
+        const savedTransaction = await transaction.save();
+        res.status(200).send({updated:updatedInventory,transaction:savedTransaction});
+    } catch (error) {
+     res.send(error)   
+    }
+
+
 }

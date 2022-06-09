@@ -24,6 +24,10 @@ const transactionModel = new mongoose.Schema({
         type:Number,
         required:true
     },
+    currentInvQuantity:{
+        type:Number,
+        required:true
+    },
     lot_id:{
         type:String,
     },
