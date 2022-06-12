@@ -28,8 +28,9 @@ route.post('/api/deleteProcess',verifyToken,processController.deleteProcess);
 
 //API for Transactions
 route.post('/api/transactions/increase/purchase',verifyToken,transactionsController.purchase);
-route.post('/api/transactions/increase/manual/',verifyToken,transactionsController.manualIncrease);
-
+route.post('/api/transactions/increase/manual',verifyToken,transactionsController.manualIncrease);
+route.post('/api/transactions/decrease/manual',verifyToken,transactionsController.manualDecrease);
+route.post('/api/transactions/decrease/lotWise',verifyToken,transactionsController.lotWiseUsage);
 
 
 module.exports=route;

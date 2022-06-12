@@ -4,7 +4,7 @@ const lotModel = new mongoose.Schema({
         type:String,
         required:true
     },
-    date:{
+    date_time:{
         type:Date,
         required:true
     },
