@@ -278,7 +278,8 @@ exports.lotWiseUsage = async(req,res) =>{
        for(let element = 0 ; element < data.length ; element ++){
         const invData = await inventoryModel.findOne({user_id:user_id,chemical_id:data[element].chemical_id.toUpperCase(),chemical_name:data[element].chemical_name.toUpperCase()});
         //check inventory levels
-        if(quantity > invData.quantity) return res.status(400).send({message:"quantity more than inventory level ",chemical:data[element]});
+        console.log(quantity,invData.quantity,data[e]);
+        if(quantity < invData.quantity) return res.status(400).send({message:"quantity more than inventory level ",chemical:data[element]});
        }
 
        const invData = await inventoryModel.findOne({user_id:user_id,chemical_id:cid,chemical_name:cnm});

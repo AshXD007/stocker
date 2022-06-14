@@ -50,7 +50,7 @@ exports.viewRaw = async(req,res)=>{
     if(!user_id) return res.status(400).send({message:'empty data field'});
 
     //get data from db
-    const data = await rawModel.find({user_id:user_id});
+    const data = await chemicalModel.find({user_id:user_id});
     //if data is empty
     const testData = JSON.stringify(data);
     if(testData === '[]') return res.status(200).send({message:"no raw"});

@@ -19,12 +19,14 @@ route.post('/api/loginUser',usersController.loginUser);
 //Api for Raw materials
 route.post('/api/addRawMaterial',verifyToken,rawMController.addRaw);
 route.post('/api/viewRawMaterial',verifyToken,rawMController.viewRaw);
+route.post('/api/deleteRawMaterial',verifyToken,rawMController.viewRaw);
 
 //API for process
 route.post('/api/addProcess',verifyToken,processController.addProcess);
 route.post('/api/getProcess',verifyToken,processController.getProcess);
 route.post('/api/allProcess',verifyToken,processController.allProcess);
 route.post('/api/deleteProcess',verifyToken,processController.deleteProcess);
+route.post('/api/deleteSingleProcess',verifyToken,processController.deleteSingleProcess);
 
 //API for Transactions
 route.post('/api/transactions/increase/purchase',verifyToken,transactionsController.purchase);

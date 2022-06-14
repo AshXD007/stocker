@@ -1,6 +1,4 @@
 const processModel = require('../model/process');
-const rawModel = require('../model/rawMaterialModel');
-const chemicalModel = require('../model/rawMaterialModel');
 
 const helpers = require('../helpers/helpers');
 
@@ -44,18 +42,21 @@ exports.addProcess = async(req,res) =>{
     //add for every chemical (raw material)
 
     for(let i = 0 ; i < idLength ; i++) {
-        cid = chemical_id[i].toUpperCase();
-        cnm = chemical_name[i].toUpperCase();
-        // const cExist = await rawModel.find({user_id:user_id,chemical_id:cid,chemical_name:cnm});
-        // if (JSON.stringify(cExist) === '[]'){
-        //     return res.status(400).send({message:"please add chemical",chemical_id:cid});
-        // }
-        const sendData = {
-            user_id:user_id,
-            chemical_id:cid,
-            chemical_name:cnm
+        let cid = chemical_id[i].toUpperCase();
+        let cnm = chemical_name[i].toUpperCase();
+        let chemFlag = false;
+        for(let j = 0 ; j < idLength ; j++){
+            const sendData = {
+                user_id:user_id,
+                chemical_id:chemical_id[j].toUpperCase(),
+                chemical_name:chemical_name[j].toUpperCase()
+            }
+            if(await helpers.existsInRaw(sendData) === false)  
+            {
+                chemFlag = true;
+            }
         }
-        if(helpers.existsInRaw(sendData) === false)  return res.status(400).send({message:"please add chemical",chemical_id:cid});
+        if(chemFlag === true) return res.status(400).send({message:"please add chemical"});
 
         const process = new processModel({
             user_id:user_id,
@@ -197,4 +198,38 @@ exports.deleteProcess = async (req,res) =>{
     } catch (error) {
         res.status(500).send(error)
     }
+}
+
+
+
+//delete chemical from process
+
+exports.deleteSingleProcess = async (req,res) =>{
+    const {user_id,process_id,process_name,chemical_id,chemical_name} = req.body;
+
+    if(!user_id || !process_id || !process_name || !chemical_id||!chemical_name) return res.status(400).send({message:"empty fields"});
+
+
+    const pid = process_id.toUpperCase();
+    const pnm = process_name.toUpperCase();
+    const cid = chemical_id.toUpperCase();
+    const cnm = chemical_name.toUpperCase();
+
+    const query = {
+        user_id:user_id,
+        process_id:pid,
+        process_name:pnm,
+        chemical_id:cid,
+        chemical_name:cnm
+    }
+
+    try {
+        const deletedProcess = await processModel.deleteOne(query);
+        if(deletedProcess.deletedCount === 0) return res.status(400).send({message:"check input or no process with id"});
+        res.status(200).send({message:"deleted successfully"});
+
+    } catch (error) {
+        res.status(500).send(error)
+    }
+
 }
