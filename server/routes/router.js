@@ -9,6 +9,8 @@ const rawMController = require('../controller/rawMaterialCont');
 const processController = require('../controller/processCont');
 //transactions controller
 const transactionsController = require('../controller/transactionController');
+//reports controller
+const reportsController = require('../controller/reports');
 
 
 
@@ -33,6 +35,10 @@ route.post('/api/transactions/increase/purchase',verifyToken,transactionsControl
 route.post('/api/transactions/increase/manual',verifyToken,transactionsController.manualIncrease);
 route.post('/api/transactions/decrease/manual',verifyToken,transactionsController.manualDecrease);
 route.post('/api/transactions/decrease/lotWise',verifyToken,transactionsController.lotWiseUsage);
+
+
+//API for Reports
+route.post('/api/reports/inventory',verifyToken,reportsController.inventory);
 
 
 module.exports=route;

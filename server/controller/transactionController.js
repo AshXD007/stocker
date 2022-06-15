@@ -99,6 +99,9 @@ exports.purchase = async (req,res) =>{
         finalAvgPrice = price;
     }
 
+    if(finalQuantity === 0 ){
+        finalAvgPrice = 0;
+    }
 
     //transaction database
 
@@ -263,6 +266,7 @@ exports.lotWiseUsage = async(req,res) =>{
     //setup date time to store easily
     const date = await helpers.dateValidate(date_time);
 
+    //data check loop
     for (let e = 0 ; e<data.length;e++){
         cid = data[e].chemical_id.toUpperCase();
         cnm = data[e].chemical_name.toUpperCase();
@@ -270,47 +274,55 @@ exports.lotWiseUsage = async(req,res) =>{
 
         //negative quantity
         if(quantity <= 0 ) return res.status(400).send({message:"nill quantity",chemical:data[e]});
-
         //check if chemical exists in raw materials 
         if(helpers.existsInRaw({user_id:user_id,chemical_id:cid,chemical_name:cnm}) === false ) return res.status(400).send({message:"please add chemical to raw material ",chemical:data[e]});
 
 
-       for(let element = 0 ; element < data.length ; element ++){
-        const invData = await inventoryModel.findOne({user_id:user_id,chemical_id:data[element].chemical_id.toUpperCase(),chemical_name:data[element].chemical_name.toUpperCase()});
+        const invData = await inventoryModel.findOne({user_id:user_id,chemical_id:cid,chemical_name:cnm});
         //check inventory levels
-        console.log(quantity,invData.quantity,data[e]);
-        if(quantity < invData.quantity) return res.status(400).send({message:"quantity more than inventory level ",chemical:data[element]});
-       }
+        if(quantity > invData.quantity) return res.status(400).send({message:"quantity more than inventory level ",chemical:data[e]});
+        
+    }
 
-       const invData = await inventoryModel.findOne({user_id:user_id,chemical_id:cid,chemical_name:cnm});
+    //data save loop 
+    for(let x = 0 ; x < data.length ; x++ ){
+        const chemId = data[x].chemical_id.toUpperCase();
+        const chemNm = data[x].chemical_name.toUpperCase();
+        const quan = data[x].quantity;
+        const invData = await inventoryModel.findOne({user_id:user_id,chemical_id:chemId,chemical_name:chemNm});
 
         //inventory levels
         const invQuantity = invData.quantity;
         const invAvgPrice = invData.inventoryAvgPrice;
 
         //final levels 
-        const finalQuantity = invQuantity - quantity;
+        const finalQuantity = invQuantity - quan;
         const finalAvgPrice = invAvgPrice;
+
+        console.log("chem: ", chemId,"invQuantity: ",invQuantity);
+        console.log("chem: ", chemId,"Quantity: ",quan);
+        console.log("chem: ", chemId,"finalQuantity: ", finalQuantity);
 
         const transaction = new transactionModel({
             user_id:user_id,
             date_time:new Date(date),
             t_type:"LOTUSAGE",
-            chemical_name:cnm,
-            chemical_id:cid,
-            quantity:quantity,
+            chemical_name:chemNm,
+            chemical_id:chemId,
+            quantity:quan,
             currentInvQuantity:finalQuantity,
             lot_id:lot.id,
             process_id:lot.process_id,
             remarks:remarks
         })
         try {
-            const updatedInventory = await inventoryModel.updateOne({user_id:user_id,chemical_id:cid,chemical_name:cnm},{quantity:finalQuantity,inventoryAvgPrice:finalAvgPrice});
+            const updatedInventory = await inventoryModel.updateOne({user_id:user_id,chemical_id:chemId,chemical_name:chemNm},{quantity:finalQuantity,inventoryAvgPrice:finalAvgPrice});
             const savedTransaction = await transaction.save();
+            console.log("4>updated Inventory : ", updatedInventory);
+            console.log("5>saved transaction : ",savedTransaction);
         } catch (error) {
          res.send(error)   
         }
-        
     }
 
     const lotUsage = new lotUsageModel({
