@@ -12,9 +12,6 @@ exports.purchase = async (req,res) =>{
         year:body.date_time.year,
         month:body.date_time.month,
         day:body.date_time.day,
-        // hour:"00",
-        // min:"00",
-        // sec:"00"
     }
     const chemicalName = body.chemical_name;
     const chemicalId = body.chemical_id;
